@@ -1,0 +1,58 @@
+
+
+<script>
+  $(document).ready(function(e)
+  {
+      //===============================Migration #51154======================================
+      $count=$("div.root").children(".child");
+       array=[];
+      $count.each(function(e){array.push($count.eq(e).html());});
+      for(e=0;e<$count.length;e++){
+          arr=array;
+          target=$count.eq(e).html();
+          var nbr = $.grep(arr, function (elem) {
+              return elem === target;
+          }).length;
+          if(nbr>1){
+              href=$count.eq(e).attr("href");
+              t=href.split("/");
+              href=t[t.length-1];
+              li=$count.eq(e).parents("li.root").html();
+              $count.eq(e).parents("li.root").html("<div class='root'>" +
+                      "<span class='project root parent nbr_"+e+"' ></span>" +
+                      "</div>" +
+                      "<ul class='projects'>" +
+                      "<li class='child'>" +
+                      li +
+                      "</li>" +
+                      "</ul>");
+              $.getScript("/vuclient.js?project_id="+href+"&nbr="+e );
+          }
+      };
+      //===========================================================================
+
+      $(".projects").children(".child").hide();
+
+ //pour chaque projet parent , on ajout le [+] si seulement ces parents fils sont visible pour l'utilisateur.
+      $times = $(".parent");for(i=0;i<$times.length;i++)
+     {
+         child=$times.eq(i).parent("div").parent("li").children(".projects");
+         if(child.length)
+         $times.eq(i).parent("div").prepend("<a href='#' class='link_child'>[+] </a>");
+
+     }
+
+      //modification du span [+]<=>[-]
+         $(".link_child").on('click',function(e){
+             if( $(this).html().trim()=="[+]")
+                 $(this).html("[-]");
+             else
+                 $(this).html("[+]");
+
+             $(this).parent("div").parent("li").children("ul").children("li").toggle();
+         });
+    
+
+  });
+</script>
+
